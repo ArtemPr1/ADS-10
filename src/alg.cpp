@@ -4,11 +4,12 @@
 #include  <locale>
 #include  <cstdlib>
 #include  "tree.h"
-using std::vector;
-vector<char> getPerm(const Tree& tree, int n) {
-  vector<char> res;
-    for (int x = 0; x < tree[n - 1].length(); x++) {
-        res.push_back(tree[n - 1][x]);
-    }
-    return res;
+std::vector<char> getPerm(const Tree& tree, int n) {
+  // напишите реализацию
+  std::string genTree = tree[n - 1];
+  std::vector<char> permutation;
+  for (int i = 0; i < genTree.length(); i++) {
+    permutation.push_back(genTree[i]);
+  }
+  return permutation;
 }
