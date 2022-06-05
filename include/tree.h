@@ -1,59 +1,77 @@
 // Copyright 2022 NNTU-CS
 #ifndef INCLUDE_TREE_H_
 #define INCLUDE_TREE_H_
-#include <string>
+#pragma once
 #include <vector>
+#include <string>
+#include<iostream>
+
 class Tree {
  private:
-    struct Node {
-        char val;
-        std::vector<Node*> ch;
-    };
-    Node* root;
-    std::vector<std::string> numbs;
-    void crTree(Node* root, std::vector<char> _numbs) {
-        if (_numbs.size() == 0)
-            return;
-        if (root->val != '-') {
-            for (auto k = _numbs.begin(); k != _numbs.end(); ++k) {
-                if (*k == root->val) {
-                    _numbs.erase(k);
-                    break;
-                }
-            }
-        }
-        for (size_t k = 0; k < _numbs.size(); ++k) {
-            root->ch.push_back(new Node);
-        }
-        for (size_t k = 0; k < root->ch.size(); ++k) {
-            root->ch[k]->val = _numbs[k];
-        }
-        for (size_t k = 0; k < root->ch.size(); ++k) {
-            crTree(root->ch[k], _numbs);
-        }
+  struct list {
+    char zn;
+    std::vector <list> dl;
+  };
+
+  int tekperestn = 0;
+  int nperestn = 0;
+  list* rt = nullptr;
+  std::vector<char> perestn;
+
+  std::vector<char> deleteElem(std::vector<char> arr, char zn) {
+    std::vector<char> nVec;
+    for (int i = 0; i < arr.size(); i++) {
+      if (arr[i] != zn) {
+        nVec.push_back(arr[i]);
+      }
     }
-    void gperm(Node* root, std::string numb = "") {
-        if (root->val != '-') {
-            numb += root->val;
-        }
-        if (!root->ch.size()) {
-            numb += root->val;
-            numbs.push_back(numb);
-            return;
-        }
-        for (size_t k = 0; k < root->ch.size(); ++k) {
-            gperm(root->ch[k], numb);
-        }
+    return nVec;
+  }
+
+  std::vector<list> createlist(std::vector<char> wk, list* hd) {
+    std::vector<list> mtv;
+    for (int i = 0; i < wk.size(); i++) {
+      list* mt = new list;
+      mt->zn = wk[i];
+      mt->dl = createlist(deleteElem(wk, wk[i]), mt);
+      mtv.push_back(*mt);
     }
+    return mtv;
+  }
+
+  std::string getElem(list* tek, std::string sl) {
+    if (tek->zn != '*') {
+      sl = sl + tek->zn;
+    }
+    for (int k = 0; k < tek->dl.size(); k++) {
+      getElem(&tek->dl[k], sl);
+    }
+    if (sl.length() == rt->dl.size()
+       && tekperestn == nperestn - 1 && perestn.empty()) {
+      for (int i = 0; i < sl.length(); i++) {
+        perestn.push_back(sl[i]);
+      }
+    } else if (sl.length() == rt->dl.size()) {
+      tekperestn++;
+    }
+    return sl;
+  }
+
  public:
-    std::string operator[](int k) const {
-        return numbs[k];
-    }
-    explicit Tree(std::vector<char> val) {
-        root = new Node;
-        root->val = '-';
-        crTree(root, val);
-        gperm(root);
-    }
+    explicit Tree(std::vector<char> wk) {
+    rt = new list;
+    rt->zn = '*';
+    rt->dl = createlist(wk, rt);
+  }
+
+  std::vector<char> getPerm(int c) {
+    nperestn = c;
+    getElem(rt, "");
+    std::vector<char> rslt = perestn;
+    perestn.clear();
+    tekperestn = 0;
+    return rslt;
+  }
 };
+
 #endif  // INCLUDE_TREE_H_
